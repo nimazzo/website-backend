@@ -9,13 +9,24 @@ public class KeyCodeAuthenticationToken extends AbstractAuthenticationToken {
 
     private final String keyCode;
 
-    public KeyCodeAuthenticationToken(String keyCode) {
-        this(keyCode, null);
+    private KeyCodeAuthenticationToken(String keyCode) {
+        super(null);
+        this.keyCode = keyCode;
+        setAuthenticated(false);
     }
 
-    public KeyCodeAuthenticationToken(String keyCode, Collection<? extends GrantedAuthority> authorities) {
+    private KeyCodeAuthenticationToken(String keyCode, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.keyCode = keyCode;
+        setAuthenticated(true);
+    }
+
+    public static KeyCodeAuthenticationToken authenticated(String keyCode, Collection<? extends GrantedAuthority> authorities) {
+        return new KeyCodeAuthenticationToken(keyCode, authorities);
+    }
+
+    public static KeyCodeAuthenticationToken unauthenticated(String keyCode) {
+        return new KeyCodeAuthenticationToken(keyCode);
     }
 
     @Override

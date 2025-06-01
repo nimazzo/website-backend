@@ -3,15 +3,13 @@ package com.example.websitebackend;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.NullSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.util.Collections;
 
@@ -26,26 +24,19 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(Collections.singletonList(customAuthProvider));
-    }
-
-    @Bean
-    public SecurityContextRepository securityContextRepository() {
-        return new NullSecurityContextRepository();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        var securityContextRepository =  new HttpSessionSecurityContextRepository();
+        var authenticationManager = new ProviderManager(Collections.singletonList(customAuthProvider));
+        var keyCodeAuthenticationFilter =  new KeyCodeAuthenticationFilter(authenticationManager, securityContextRepository);
+
         http
-                .authenticationProvider(customAuthProvider)
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new KeyCodeAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(keyCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
-
 }

@@ -22,7 +22,7 @@ public class MyCustomAuthenticationProvider implements AuthenticationProvider {
         var keyCode = authentication.getCredentials().toString();
 
         if (keyCode.equals("00000000")) {
-            return new KeyCodeAuthenticationToken(keyCode,
+            return KeyCodeAuthenticationToken.authenticated(keyCode,
                     Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         }
 

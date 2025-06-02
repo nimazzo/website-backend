@@ -36,6 +36,7 @@ public class BruteForceDefender {
         if (newAttempts >= MAX_FAILED_ATTEMPTS) {
             log.warn("IP {} is blocked for {} seconds due to too many failed attempts ({} attempts)",
                     ip, timeout.getSeconds(), newAttempts);
+            throw new BlockedException("Too many failed attempts, please try again later.");
         }
     }
 

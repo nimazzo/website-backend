@@ -1,5 +1,6 @@
-package com.example.websitebackend;
+package com.example.websitebackend.security.keycode;
 
+import com.example.websitebackend.security.bruteforce.BlockedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;

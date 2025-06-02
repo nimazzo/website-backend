@@ -1,5 +1,8 @@
-package com.example.websitebackend;
+package com.example.websitebackend.security;
 
+import com.example.websitebackend.security.bruteforce.BruteForceDefender;
+import com.example.websitebackend.security.keycode.KeyCodeAuthenticationFilter;
+import com.example.websitebackend.security.keycode.KeyCodeAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

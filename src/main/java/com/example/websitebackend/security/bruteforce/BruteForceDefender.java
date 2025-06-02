@@ -1,4 +1,4 @@
-package com.example.websitebackend;
+package com.example.websitebackend.security.bruteforce;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.example.websitebackend;
+package com.example.websitebackend.sessions;
 
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;

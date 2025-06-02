@@ -1,4 +1,4 @@
-package com.example.websitebackend;
+package com.example.websitebackend.security.bruteforce;
 
 import org.springframework.security.core.AuthenticationException;
 

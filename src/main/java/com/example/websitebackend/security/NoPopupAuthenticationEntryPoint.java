@@ -1,4 +1,4 @@
-package com.example.websitebackend;
+package com.example.websitebackend.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

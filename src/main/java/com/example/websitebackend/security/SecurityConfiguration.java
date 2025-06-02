@@ -3,6 +3,7 @@ package com.example.websitebackend.security;
 import com.example.websitebackend.security.bruteforce.BruteForceDefender;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationFilter;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationProvider;
+import com.example.websitebackend.security.keycode.TokenDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,9 +18,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -30,11 +32,12 @@ public class SecurityConfiguration {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    private UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("admin").password(encoder.encode("admin")).roles("ADMIN").build(),
-                User.withUsername("00000000").password(encoder.encode("00000000")).roles("USER").build()
-        );
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+        var udm = new CustomUserDetailsManager(encoder);
+        udm.createUser(User.withUsername("admin").password(encoder.encode("admin")).roles("ADMIN").build());
+        udm.createToken(new TokenDetails("00000000", "public", LocalDateTime.now()));
+        return udm;
     }
 
     @Bean
@@ -56,6 +59,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/public/**", "/error/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/admin/tokens").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(e -> e.authenticationEntryPoint(noPopupEntryPoint))

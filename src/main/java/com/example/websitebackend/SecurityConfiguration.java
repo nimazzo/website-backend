@@ -35,11 +35,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
+    public AuthenticationManager authenticationManager(BruteForceDefender bruteForceDefender) {
         var uds = userDetailsService(passwordEncoder());
         var authenticationProvider = new DaoAuthenticationProvider(uds);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
-        var tokenProvider = new KeyCodeAuthenticationProvider(uds, passwordEncoder());
+        var tokenProvider = new KeyCodeAuthenticationProvider(uds, passwordEncoder(), bruteForceDefender);
         return new ProviderManager(authenticationProvider, tokenProvider);
     }
 

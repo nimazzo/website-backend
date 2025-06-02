@@ -4,6 +4,7 @@ import com.example.websitebackend.security.bruteforce.BruteForceDefender;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationFilter;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationProvider;
 import com.example.websitebackend.security.keycode.TokenDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,15 @@ import java.time.LocalDateTime;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    @Value("${admin.username:admin}")
+    private String adminUsername;
+
+    @Value("${admin.password:admin}")
+    private String adminPassword;
+
+    @Value("${token.create.public.token:false}")
+    private boolean createPublicToken;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -35,8 +45,10 @@ public class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) {
         var udm = new CustomUserDetailsManager(encoder);
-        udm.createUser(User.withUsername("admin").password(encoder.encode("admin")).roles("ADMIN").build());
-        udm.createToken(new TokenDetails("00000000", "public", LocalDateTime.now()));
+        udm.createUser(User.withUsername(adminUsername).password(encoder.encode(adminPassword)).roles("ADMIN").build());
+        if (createPublicToken) {
+            udm.createToken(new TokenDetails("00000000", "public", LocalDateTime.now()));
+        }
         return udm;
     }
 

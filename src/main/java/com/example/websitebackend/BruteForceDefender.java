@@ -2,8 +2,10 @@ package com.example.websitebackend;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +15,9 @@ public class BruteForceDefender {
     private static final Logger log = LoggerFactory.getLogger(BruteForceDefender.class);
 
     private final static int MAX_FAILED_ATTEMPTS = 3;
-    private final static long BLOCK_TIME_MS = 10 * 1000; // 24 * 60 * 60 * 1000;
+
+    @Value("${bruteforcedefender.block-time:24h}")
+    private Duration timeout;
 
     private record AttemptInfo(
             int attempts,
@@ -29,6 +33,10 @@ public class BruteForceDefender {
         var newAttempts = prev.attempts + 1;
         attempts.put(ip, new AttemptInfo(newAttempts, now));
         log.warn("Login failed for IP: {}, attempts: {}, last failed time: {}", ip, newAttempts, now);
+        if (newAttempts >= MAX_FAILED_ATTEMPTS) {
+            log.warn("IP {} is blocked for {} seconds due to too many failed attempts ({} attempts)",
+                    ip, timeout.getSeconds(), newAttempts);
+        }
     }
 
     public void loginSucceeded(String ip) {
@@ -49,7 +57,7 @@ public class BruteForceDefender {
 
         long now = System.currentTimeMillis();
 
-        if (now - attemptInfo.lastFailedTime >= BLOCK_TIME_MS) {
+        if (now - attemptInfo.lastFailedTime >= timeout.toMillis()) {
             attempts.remove(ip);
             log.info("IP {} is not blocked anymore (attempts: {}, last failed time: {})", ip,
                     attemptInfo.attempts, attemptInfo.lastFailedTime);

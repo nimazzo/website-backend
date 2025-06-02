@@ -38,7 +38,6 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
             };
         }
 
-        request.getSession(true).setMaxInactiveInterval(10);
         var token = KeyCodeAuthenticationToken.unauthenticated(keyCode);
         return getAuthenticationManager().authenticate(token);
     }

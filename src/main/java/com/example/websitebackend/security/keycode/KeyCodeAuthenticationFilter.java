@@ -17,7 +17,7 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
 
     private static final String MESSAGE_TEMPLATE = """
             {
-                "status": "error",
+                "status": "%s",
                 "reason": "%s",
                 "message": "%s"
             }
@@ -52,9 +52,9 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
             String message;
             if (exception instanceof BlockedException) {
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                message = String.format(MESSAGE_TEMPLATE, "blocked", exception.getLocalizedMessage());
+                message = String.format(MESSAGE_TEMPLATE, "error", "blocked", exception.getLocalizedMessage());
             } else {
-                message = String.format(MESSAGE_TEMPLATE, "UNAUTHORIZED", "Full authentication is required to access this resource");
+                message = String.format(MESSAGE_TEMPLATE, "error", "UNAUTHORIZED", "Full authentication is required to access this resource");
             }
 
             res.getWriter().write(message);
@@ -66,7 +66,7 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");
-            res.getWriter().write(String.format(MESSAGE_TEMPLATE, "authenticated", "Successfully authenticated with key code"));
+            res.getWriter().write(String.format(MESSAGE_TEMPLATE, "success", "authenticated", "Successfully authenticated with key code"));
         };
     }
 }

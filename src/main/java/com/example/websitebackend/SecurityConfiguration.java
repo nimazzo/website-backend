@@ -44,15 +44,19 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   AuthenticationManager authenticationManager,
+                                                   NoPopupAuthenticationEntryPoint noPopupEntryPoint) throws Exception {
         var keyCodeAuthenticationFilter = new KeyCodeAuthenticationFilter(authenticationManager);
 
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(e -> e.authenticationEntryPoint(noPopupEntryPoint))
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(keyCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

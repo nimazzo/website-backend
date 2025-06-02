@@ -16,8 +16,13 @@ public class BruteForceDefender {
 
     private final static int MAX_FAILED_ATTEMPTS = 3;
 
-    @Value("${bruteforcedefender.block-time:24h}")
-    private Duration timeout;
+
+    private final Duration timeout;
+
+    public BruteForceDefender(@Value("${bruteforcedefender.block-time:24h}") Duration timeout) {
+        this.timeout = timeout;
+        log.info("BruteForceDefender initialized with block time: {}", timeout);
+    }
 
     private record AttemptInfo(
             int attempts,

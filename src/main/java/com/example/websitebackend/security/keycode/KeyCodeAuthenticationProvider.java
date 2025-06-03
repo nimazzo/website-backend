@@ -62,6 +62,19 @@ public class KeyCodeAuthenticationProvider implements AuthenticationProvider {
         var request = RequestContextHolder.currentRequestAttributes();
         if (request instanceof ServletRequestAttributes servletRequestAttributes) {
             var servletRequest = servletRequestAttributes.getRequest();
+
+            var cfIp = servletRequest.getHeader("CF-Connecting-IP");
+            log.info("CF-Connecting-IP: {}", cfIp);
+            if (cfIp != null && !cfIp.isBlank()) {
+                return cfIp;
+            }
+
+            var xForwardedFor = servletRequest.getHeader("X-Forwarded-For");
+            log.info("X-Forwarded-For: {}", xForwardedFor);
+            if (xForwardedFor != null && !xForwardedFor.isBlank()) {
+                return xForwardedFor.split(",")[0].trim();
+            }
+
             return servletRequest.getRemoteAddr();
         }
         throw new IllegalStateException("No request attributes found to determine client IP");

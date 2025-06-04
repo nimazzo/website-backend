@@ -1,4 +1,4 @@
-package com.example.websitebackend.controllers;
+package com.example.websitebackend.admin;
 
 import com.example.websitebackend.security.CustomUserDetailsManager;
 import com.example.websitebackend.security.bruteforce.BruteForceDefender;

@@ -1,4 +1,4 @@
-package com.example.websitebackend.controllers;
+package com.example.websitebackend.home;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

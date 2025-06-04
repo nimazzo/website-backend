@@ -1,0 +1,27 @@
+<svg
+        width="64"
+        height="64"
+        viewBox="0 0 200 200"
+        xmlns="http://www.w3.org/2000/svg"
+>
+    <circle
+            cx="100"
+            cy="100"
+            r="90"
+            fill="#e0e7ff"
+            stroke="#5c6bc0"
+            stroke-width="16"
+    />
+    <text
+            x="50%"
+            y="52%"
+            dominant-baseline="middle"
+            text-anchor="middle"
+            font-size="90"
+            font-weight="bold"
+            fill="#5c6bc0"
+            font-family="Arial, sans-serif"
+    >
+        NM
+    </text>
+</svg>

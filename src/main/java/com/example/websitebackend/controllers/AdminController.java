@@ -1,16 +1,14 @@
 package com.example.websitebackend.controllers;
 
 import com.example.websitebackend.security.CustomUserDetailsManager;
+import com.example.websitebackend.security.bruteforce.BruteForceDefender;
 import com.example.websitebackend.security.keycode.TokenDetails;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,9 +19,11 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final CustomUserDetailsManager userDetailsManager;
+    private final BruteForceDefender bruteForceDefender;
 
-    public AdminController(UserDetailsService userDetailsService) {
+    public AdminController(UserDetailsService userDetailsService, BruteForceDefender bruteForceDefender) {
         this.userDetailsManager = (CustomUserDetailsManager) userDetailsService;
+        this.bruteForceDefender = bruteForceDefender;
     }
 
     public record TokenRequest(String token, String owner) {
@@ -47,6 +47,13 @@ public class AdminController {
         }
         var response = userDetailsManager.getAllTokens();
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admin/unblock")
+    public ResponseEntity<?> unblockAllUsers() {
+        log.info("Unblocking all users...");
+        bruteForceDefender.unblockAllUsers();
+        return ResponseEntity.ok().build();
     }
 
     private void validateTokenRequest(List<TokenRequest> tokens) throws BadRequestException {

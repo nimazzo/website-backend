@@ -72,6 +72,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/", "/public/**", "/error/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/admin/tokens").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/unblock").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(e -> e.authenticationEntryPoint(noPopupEntryPoint))

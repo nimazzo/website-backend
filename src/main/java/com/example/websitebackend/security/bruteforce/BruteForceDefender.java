@@ -24,6 +24,10 @@ public class BruteForceDefender {
         log.info("BruteForceDefender initialized with block time: {}", timeout);
     }
 
+    public void unblockAllUsers() {
+        attempts.clear();
+    }
+
     private record AttemptInfo(
             int attempts,
             long lastFailedTime

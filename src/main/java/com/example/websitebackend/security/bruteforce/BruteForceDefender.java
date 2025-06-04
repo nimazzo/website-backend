@@ -1,8 +1,8 @@
 package com.example.websitebackend.security.bruteforce;
 
+import com.example.websitebackend.security.SecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -19,8 +19,8 @@ public class BruteForceDefender {
 
     private final Duration timeout;
 
-    public BruteForceDefender(@Value("${bruteforcedefender.block-time:24h}") Duration timeout) {
-        this.timeout = timeout;
+    public BruteForceDefender(SecurityProperties securityProperties) {
+        this.timeout = securityProperties.bruteforceDefenderBlockTime();
         log.info("BruteForceDefender initialized with block time: {}", timeout);
     }
 

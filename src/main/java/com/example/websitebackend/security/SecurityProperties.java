@@ -10,7 +10,6 @@ public record SecurityProperties(
         @DefaultValue("admin")
         String adminUsername,
 
-        @DefaultValue("admin")
         String adminPassword,
 
         @DefaultValue("false")
@@ -18,5 +17,7 @@ public record SecurityProperties(
 
         @DefaultValue("24h")
         Duration bruteforceDefenderBlockTime
+
+
 ) {
 }

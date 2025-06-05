@@ -4,6 +4,8 @@ import com.example.websitebackend.security.bruteforce.BruteForceDefender;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationFilter;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationProvider;
 import com.example.websitebackend.security.keycode.TokenDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,10 +24,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
 
     private final SecurityProperties securityProperties;
 
@@ -41,9 +46,17 @@ public class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) {
         var udm = new CustomUserDetailsManager(encoder);
+
+        var adminPassword = securityProperties.adminPassword();
+        if (adminPassword == null || adminPassword.isBlank()) {
+            log.warn("Admin password is not set. Creating a random password.");
+            adminPassword = UUID.randomUUID().toString();
+            System.out.println(adminPassword);
+        }
+
         udm.createUser(User
                 .withUsername(securityProperties.adminUsername())
-                .password(encoder.encode(securityProperties.adminPassword()))
+                .password(encoder.encode(adminPassword))
                 .roles("ADMIN")
                 .build());
         if (securityProperties.createPublicToken()) {

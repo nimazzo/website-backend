@@ -109,6 +109,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(e -> e.authenticationEntryPoint(noPopupEntryPoint))
                 .httpBasic(Customizer.withDefaults())
+                .logout(logout -> logout.logoutSuccessUrl("/public/index.html"))
                 .addFilterBefore(keyCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

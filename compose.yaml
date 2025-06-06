@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_PASSWORD: ${PG_PW}
+      POSTGRES_USER: ${PG_USER}
+    ports:
+      - '5432'
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - '8081:80'
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${PG_DB}
+      SPRING_DATASOURCE_USERNAME: ${PG_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PG_PW}
+      CONTENT_PATH: ./content
+      SECURITY_BRUTEFORCE_DEFENDER_BLOCK_TIME: 5m
+      SECURITY_CREATE_PUBLIC_TOKEN: true
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres

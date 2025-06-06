@@ -35,7 +35,7 @@ public class CustomErrorController implements ErrorController {
         }
 
         return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", "/")
+                .header("Location", "/public/index.html")
                 .build();
     }
 

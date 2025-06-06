@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatchers;
 
 public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -24,7 +25,10 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
             """;
 
     public KeyCodeAuthenticationFilter(AuthenticationManager authenticationManager) {
-        super(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/authenticate"), authenticationManager);
+        super(RequestMatchers.anyOf(
+                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/authenticate"),
+                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/authenticate")
+        ), authenticationManager);
         setSecurityContextRepository(new HttpSessionSecurityContextRepository());
         setAuthenticationSuccessHandler(onAuthenticationSuccess());
         setAuthenticationFailureHandler(onAuthenticationFailure());
@@ -62,7 +66,11 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
     }
 
     private static AuthenticationSuccessHandler onAuthenticationSuccess() {
-        return (_, res, _) -> {
+        return (req, res, _) -> {
+            if ("GET".equalsIgnoreCase(req.getMethod())) {
+                res.sendRedirect("/private/index.html");
+            }
+
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");

@@ -1,5 +1,6 @@
 package com.example.websitebackend.admin;
 
+import com.example.websitebackend.content.ContentService;
 import com.example.websitebackend.security.CustomUserDetailsManager;
 import com.example.websitebackend.security.bruteforce.BruteForceDefender;
 import com.example.websitebackend.security.keycode.TokenDetails;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,10 +21,12 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final CustomUserDetailsManager userDetailsManager;
+    private final ContentService contentService;
     private final BruteForceDefender bruteForceDefender;
 
-    public AdminController(UserDetailsService userDetailsService, BruteForceDefender bruteForceDefender) {
+    public AdminController(UserDetailsService userDetailsService, ContentService contentService, BruteForceDefender bruteForceDefender) {
         this.userDetailsManager = (CustomUserDetailsManager) userDetailsService;
+        this.contentService = contentService;
         this.bruteForceDefender = bruteForceDefender;
     }
 
@@ -53,6 +57,13 @@ public class AdminController {
     public ResponseEntity<?> unblockAllUsers() {
         log.info("Unblocking all users...");
         bruteForceDefender.unblockAllUsers();
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/admin/content")
+    public ResponseEntity<Void> setContent(@RequestParam("content") MultipartFile contentFile) {
+        contentService.setContent(contentFile);
         return ResponseEntity.ok().build();
     }
 

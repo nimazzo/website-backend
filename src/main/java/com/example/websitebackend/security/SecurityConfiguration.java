@@ -6,6 +6,7 @@ import com.example.websitebackend.security.keycode.KeyCodeAuthenticationProvider
 import com.example.websitebackend.security.keycode.TokenDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -82,12 +83,10 @@ public class SecurityConfiguration {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/public/**", "/error/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "/public/**", "/error/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/admin/tokens").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/admin/unblock").hasRole("ADMIN")
-                        .requestMatchers("/content").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/content").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN")
                         .requestMatchers("/private/**").authenticated()
                         .anyRequest().denyAll())
                 .csrf(AbstractHttpConfigurer::disable)

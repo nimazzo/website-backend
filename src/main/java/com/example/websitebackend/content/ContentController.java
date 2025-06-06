@@ -5,8 +5,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ public class ContentController {
         this.contentService = contentService;
     }
 
-    @GetMapping("/content")
+    @GetMapping("private/content")
     public ResponseEntity<ContentData> getContent() throws IOException {
         var contentData = contentService.getContent();
         return contentData != null ? ResponseEntity.ok(contentData) : ResponseEntity.notFound().build();
@@ -42,12 +43,4 @@ public class ContentController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
-
-
-    @PostMapping(path = "/content")
-    public ResponseEntity<Void> setContent(@RequestParam("content") MultipartFile contentFile) {
-        contentService.setContent(contentFile);
-        return ResponseEntity.ok().build();
-    }
-
 }

@@ -36,14 +36,19 @@ public class ContentService {
         log.info("Content path initialized at: {}", contentPath.toAbsolutePath());
     }
 
-    public ContentData getContent() throws IOException {
-        var file = contentPath.resolve(contentProperties.jsonFileName());
+    public ContentData getContent(String lang) throws IOException {
+        var file = contentPath.resolve(localizeFileName(contentProperties.jsonFileName(), lang));
         var resource = new FileSystemResource(file);
         if (!resource.exists() || !resource.isReadable()) {
-            log.warn("Resource not found or not readable: {}", contentProperties.jsonFileName());
+            log.warn("Resource not found or not readable: {}", file);
             return null;
         }
         return objectMapper.readValue(resource.getInputStream(), ContentData.class);
+    }
+
+    private String localizeFileName(String fileName, String lang) {
+        var fileParts = fileName.split("\\.");
+        return fileParts[0] + "_" + lang + "." + fileParts[1];
     }
 
     public Resource getResource(String fileName) throws IOException {
@@ -68,7 +73,8 @@ public class ContentService {
 
     /*
      * The zip file has the following structure:
-     * - content.json
+     * - content_de.json
+     * - content_en.json
      * - private/content/
      *     - <other files>
      */
@@ -81,12 +87,16 @@ public class ContentService {
             log.info("Temporary directory created at: {}", tempDir.toAbsolutePath());
 
             ZipEntry entry;
-            boolean foundContentJson = false;
+            var foundContentJson = new boolean[]{false, false};
             while ((entry = is.getNextEntry()) != null) {
                 var name = entry.getName();
                 log.info("Processing ZIP entry: {}", name);
-                if (name.equals(contentProperties.jsonFileName())) {
-                    foundContentJson = true;
+                var fileName = contentProperties.jsonFileName().split("\\.")[0];
+                var fileExtension = contentProperties.jsonFileName().split("\\.")[1];
+                if (name.equals(fileName + "_de." + fileExtension)) {
+                    foundContentJson[0] = true;
+                } else if (name.equals(fileName + "_en." + fileExtension)) {
+                    foundContentJson[1] = true;
                 }
 
                 var filePath = tempDir.resolve(name);
@@ -99,9 +109,14 @@ public class ContentService {
                 }
             }
 
-            if (!foundContentJson) {
-                log.error("ZIP file does not contain content.json.");
-                throw new IllegalArgumentException("ZIP file must contain content.json.");
+            if (!foundContentJson[0]) {
+                log.error("ZIP file does not contain content_de.json.");
+                throw new IllegalArgumentException("ZIP file must contain content_de.json.");
+            }
+
+            if (!foundContentJson[1]) {
+                log.error("ZIP file does not contain content_en.json.");
+                throw new IllegalArgumentException("ZIP file must contain content_en.json.");
             }
 
             copyFilesToContentFolder(tempDir);

@@ -53,21 +53,27 @@ public class SecurityConfiguration {
     public UserDetailsService userDetailsService(PasswordEncoder encoder, TokenRepository tokenRepository, DataSource dataSource) {
         var udm = new CustomUserDetailsManager(dataSource, encoder, tokenRepository);
 
-        var adminPassword = securityProperties.adminPassword();
-        if (adminPassword == null || adminPassword.isBlank()) {
-            log.warn("Admin password is not set. Creating a random password.");
-            adminPassword = UUID.randomUUID().toString();
-            System.out.println(adminPassword);
+        if (!udm.userExists(securityProperties.adminUsername())) {
+            var adminPassword = securityProperties.adminPassword();
+            if (adminPassword == null || adminPassword.isBlank()) {
+                log.warn("Admin password is not set. Creating a random password.");
+                adminPassword = UUID.randomUUID().toString();
+                System.out.println(adminPassword);
+            }
+
+            udm.createUser(User
+                    .withUsername(securityProperties.adminUsername())
+                    .password(encoder.encode(adminPassword))
+                    .roles("ADMIN")
+                    .build());
+        }
+        
+        if (!udm.tokenExists("00000000")) {
+            if (securityProperties.createPublicToken()) {
+                udm.createToken(new TokenDetails("00000000", "public", LocalDateTime.now()));
+            }
         }
 
-        udm.createUser(User
-                .withUsername(securityProperties.adminUsername())
-                .password(encoder.encode(adminPassword))
-                .roles("ADMIN")
-                .build());
-        if (securityProperties.createPublicToken()) {
-            udm.createToken(new TokenDetails("00000000", "public", LocalDateTime.now()));
-        }
         return udm;
     }
 

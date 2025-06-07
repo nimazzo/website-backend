@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -22,8 +23,8 @@ public class ContentController {
     }
 
     @GetMapping("private/content")
-    public ResponseEntity<ContentData> getContent() throws IOException {
-        var contentData = contentService.getContent();
+    public ResponseEntity<ContentData> getContent(@RequestParam(value = "lang", defaultValue = "de") String lang) throws IOException {
+        var contentData = contentService.getContent(lang);
         return contentData != null ? ResponseEntity.ok(contentData) : ResponseEntity.notFound().build();
     }
 

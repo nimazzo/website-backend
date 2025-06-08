@@ -47,7 +47,6 @@ $ cd website-backend
   to the console on application startup.
 + `PGADMIN_EMAIL`: Email address for the pgAdmin user.
 + `PGADMIN_PASSWORD`: Password for the pgAdmin user.
-+ `SPRING_DATASOURCE_URL`: JDBC URL for the PostgreSQL database.
 + `PG_DB`: Name of the PostgreSQL database.
 + `PG_USER`: Username for the PostgreSQL database.
 + `PG_PW`: Password for the PostgreSQL database.
@@ -68,9 +67,7 @@ PGADMIN_EMAIL=admin@example.com
 PGADMIN_PASSWORD=secret
 
 # PostgreSQL configuration
-SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/development
 PG_DB=development
-
 PG_USER=user
 PG_PW=secret
 ```

@@ -34,7 +34,9 @@ $ cd website-backend
 
 ### Set up Environment Variables
 
-+ `CONTENT_PATH`: Path where the content of the website will be uploaded to.
++ `CONTENT_PATH`: Path where the content of the website will be uploaded to. In production this will point to a named
+  volume inside the Docker container, while in development it must be set to a local directory that is writable by the
+  application.
 + `SECURITY_BRUTEFORCE_DEFENDER_BLOCK_TIME`: Time for which an IP address will be blocked after too many
   failed login attempts.
 + `SECURITY_CREATE_PUBLIC_TOKEN`: If set to `true`, a public token (`00000000`) will be created on application startup.

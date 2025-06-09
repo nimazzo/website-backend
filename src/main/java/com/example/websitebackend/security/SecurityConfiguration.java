@@ -5,6 +5,7 @@ import com.example.websitebackend.security.db.TokenRepository;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationFilter;
 import com.example.websitebackend.security.keycode.KeyCodeAuthenticationProvider;
 import com.example.websitebackend.security.keycode.TokenDetails;
+import com.example.websitebackend.security.tracking.AuthenticationTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
@@ -67,7 +68,7 @@ public class SecurityConfiguration {
                     .roles("ADMIN")
                     .build());
         }
-        
+
         if (!udm.tokenExists("00000000")) {
             if (securityProperties.createPublicToken()) {
                 udm.createToken(new TokenDetails("00000000", "public", LocalDateTime.now()));
@@ -78,10 +79,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(BruteForceDefender bruteForceDefender, UserDetailsService uds) {
+    public AuthenticationManager authenticationManager(BruteForceDefender bruteForceDefender,
+                                                       UserDetailsService uds,
+                                                       AuthenticationTracker authenticationTracker) {
         var authenticationProvider = new DaoAuthenticationProvider(uds);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
-        var tokenProvider = new KeyCodeAuthenticationProvider(uds, passwordEncoder(), bruteForceDefender);
+        var tokenProvider = new KeyCodeAuthenticationProvider(uds, passwordEncoder(), bruteForceDefender, authenticationTracker);
         return new ProviderManager(authenticationProvider, tokenProvider);
     }
 

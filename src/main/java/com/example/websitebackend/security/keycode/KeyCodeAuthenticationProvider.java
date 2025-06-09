@@ -2,6 +2,7 @@ package com.example.websitebackend.security.keycode;
 
 import com.example.websitebackend.security.bruteforce.BlockedException;
 import com.example.websitebackend.security.bruteforce.BruteForceDefender;
+import com.example.websitebackend.security.tracking.AuthenticationTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,11 +22,13 @@ public class KeyCodeAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final BruteForceDefender bruteForceDefender;
+    private final AuthenticationTracker authenticationTracker;
 
-    public KeyCodeAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, BruteForceDefender bruteForceDefender) {
+    public KeyCodeAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, BruteForceDefender bruteForceDefender, AuthenticationTracker authenticationTracker) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.bruteForceDefender = bruteForceDefender;
+        this.authenticationTracker = authenticationTracker;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class KeyCodeAuthenticationProvider implements AuthenticationProvider {
             if (passwordEncoder.matches(keyCode, user.getPassword())) {
                 log.info("Key code authenticated successfully for user: {}", user.getUsername());
                 bruteForceDefender.loginSucceeded(clientIP);
+                authenticationTracker.trackSuccessfulAuthentication(keyCode);
                 return KeyCodeAuthenticationToken.authenticated(keyCode, user.getAuthorities());
             }
         } catch (UsernameNotFoundException | BadCredentialsException e) {

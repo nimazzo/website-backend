@@ -4,6 +4,8 @@ import com.example.websitebackend.content.ContentService;
 import com.example.websitebackend.security.CustomUserDetailsManager;
 import com.example.websitebackend.security.bruteforce.BruteForceDefender;
 import com.example.websitebackend.security.keycode.TokenDetails;
+import com.example.websitebackend.security.tracking.Authentication;
+import com.example.websitebackend.security.tracking.AuthenticationTracker;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +25,13 @@ public class AdminController {
     private final CustomUserDetailsManager userDetailsManager;
     private final ContentService contentService;
     private final BruteForceDefender bruteForceDefender;
+    private final AuthenticationTracker authenticationTracker;
 
-    public AdminController(UserDetailsService userDetailsService, ContentService contentService, BruteForceDefender bruteForceDefender) {
+    public AdminController(UserDetailsService userDetailsService, ContentService contentService, BruteForceDefender bruteForceDefender, AuthenticationTracker authenticationTracker) {
         this.userDetailsManager = (CustomUserDetailsManager) userDetailsService;
         this.contentService = contentService;
         this.bruteForceDefender = bruteForceDefender;
+        this.authenticationTracker = authenticationTracker;
     }
 
     public record TokenRequest(String token, String owner) {
@@ -65,6 +69,11 @@ public class AdminController {
     public ResponseEntity<Void> setContent(@RequestParam("content") MultipartFile contentFile) {
         contentService.setContent(contentFile);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/admin/authentications")
+    public List<Authentication> getAllAuthentications() {
+        return authenticationTracker.getAllAuthentications();
     }
 
     private void validateTokenRequest(List<TokenRequest> tokens) throws BadRequestException {

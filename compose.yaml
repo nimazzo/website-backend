@@ -5,6 +5,9 @@ services:
       POSTGRES_DB: ${PG_DB}
       POSTGRES_PASSWORD: ${PG_PW}
       POSTGRES_USER: ${PG_USER}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     ports:
       - '5432'
 
@@ -38,3 +41,4 @@ services:
 
 volumes:
   content_data:
+  pgdata:

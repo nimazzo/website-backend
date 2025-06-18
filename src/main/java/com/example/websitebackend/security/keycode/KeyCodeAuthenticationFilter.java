@@ -48,10 +48,15 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
     }
 
     private AuthenticationFailureHandler onAuthenticationFailure() {
-        return (_, res, exception) -> {
+        return (req, res, exception) -> {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");
+
+            if ("GET".equalsIgnoreCase(req.getMethod())) {
+                res.sendRedirect("/public/index.html?error");
+                return;
+            }
 
             String message;
             if (exception instanceof BlockedException) {
@@ -69,6 +74,7 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
         return (req, res, _) -> {
             if ("GET".equalsIgnoreCase(req.getMethod())) {
                 res.sendRedirect("/private/index.html");
+                return;
             }
 
             res.setStatus(HttpServletResponse.SC_OK);

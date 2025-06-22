@@ -9,6 +9,7 @@ public record About(
         String photo,
         String country,
         GitHub github,
+        CV cv,
         String email,
         String footer
 ) {

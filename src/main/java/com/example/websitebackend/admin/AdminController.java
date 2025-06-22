@@ -57,6 +57,24 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/admin/tokens/add")
+    public ResponseEntity<?> createTokenForOwner(@RequestParam("owner") String owner) {
+        log.info("Creating token for owner: {}", owner);
+        if (owner == null || owner.isBlank()) {
+            log.error("Owner must not be null or blank.");
+            return ResponseEntity.badRequest().body("Owner must not be null or blank.");
+        }
+
+        if (userDetailsManager.getTokenByOwner(owner) != null) {
+            log.error("Token already exists for owner: {}", owner);
+            return ResponseEntity.badRequest().body("Token already exists for owner: " + owner);
+        }
+
+        var token = userDetailsManager.createTokenForOwner(owner);
+        log.info("Token created successfully: {}", token);
+        return ResponseEntity.ok(token);
+    }
+
     @PostMapping("/admin/unblock")
     public ResponseEntity<?> unblockAllUsers() {
         log.info("Unblocking all users...");

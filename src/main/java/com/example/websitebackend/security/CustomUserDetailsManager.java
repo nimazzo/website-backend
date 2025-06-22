@@ -9,9 +9,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class CustomUserDetailsManager extends JdbcUserDetailsManager {
@@ -49,5 +52,27 @@ public class CustomUserDetailsManager extends JdbcUserDetailsManager {
                 .password(passwordEncoder.encode(tokenDetails.token()))
                 .roles("USER")
                 .build();
+    }
+
+    @Transactional
+    public TokenDetails createTokenForOwner(String owner) {
+        var token = generateRandomToken();
+        var tokenDetails = new TokenDetails(token, owner, LocalDateTime.now());
+        createToken(tokenDetails);
+        return tokenDetails;
+    }
+
+    private String generateRandomToken() {
+        var rng = new SecureRandom();
+        String token;
+        do {
+            token = Integer.toString(rng.nextInt(100_000_000)).formatted("%08d");
+        } while (tokenExists(token));
+
+        return token;
+    }
+
+    public TokenDetails getTokenByOwner(String owner) {
+        return tokenRepository.findByOwner(owner);
     }
 }

@@ -26,8 +26,8 @@ public class KeyCodeAuthenticationFilter extends AbstractAuthenticationProcessin
 
     public KeyCodeAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(RequestMatchers.anyOf(
-                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/authenticate"),
-                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/authenticate")
+                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/login"),
+                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/login")
         ), authenticationManager);
         setSecurityContextRepository(new HttpSessionSecurityContextRepository());
         setAuthenticationSuccessHandler(onAuthenticationSuccess());

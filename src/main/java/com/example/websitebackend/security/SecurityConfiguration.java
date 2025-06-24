@@ -96,7 +96,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((auth) -> {
                     auth
                             .requestMatchers(HttpMethod.GET, "/", "/public/**", "/error/**").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/login").permitAll()
                             .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN")
                             .requestMatchers("/private/**").authenticated();

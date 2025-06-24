@@ -101,7 +101,7 @@ $ ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 
 Once the server is running, the website will be served at `http://localhost:8080`. By default, unauthenticated users
 will be redirected to a [lockscreen](#Lockscreen). This can be skipped by passing the authentication token as a query
-parameter, e.g. `http://localhost:8080/authenticate?code=00000000`.
+parameter, e.g. `http://localhost:8080/login?code=00000000`.
 
 ### Web Interface
 

@@ -1,0 +1,16 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "development",
+      "Group": "Servers",
+      "Port": 5432,
+      "Username": "admin",
+      "Host": "postgres",
+      "MaintenanceDB": "postgres",
+      "ConnectionParameters": {
+        "sslmode": "prefer",
+        "connect_timeout": 10
+      }
+    }
+  }
+}

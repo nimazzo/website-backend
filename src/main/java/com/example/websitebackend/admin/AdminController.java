@@ -90,7 +90,10 @@ public class AdminController {
     }
 
     @GetMapping("/admin/authentications")
-    public List<Authentication> getAllAuthentications() {
+    public List<Authentication> getAllAuthentications(@RequestParam(value = "successful", required = false) Boolean successful) {
+        if (successful != null) {
+            return authenticationTracker.getAuthenticationsBySuccess(successful);
+        }
         return authenticationTracker.getAllAuthentications();
     }
 

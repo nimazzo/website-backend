@@ -15,18 +15,26 @@ public class Authentication {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "token", nullable = false)
+    @JoinColumn(name = "token")
     private Token token;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(nullable = false)
+    private Boolean successful;
+
+    @Column
+    private String attemptedToken;
+
     public Authentication() {
     }
 
-    public Authentication(Token token, LocalDateTime timestamp) {
+    public Authentication(Token token, LocalDateTime timestamp, Boolean successful, String attemptedToken) {
         this.token = token;
         this.timestamp = timestamp;
+        this.successful = successful;
+        this.attemptedToken = attemptedToken;
     }
 
     public Integer getId() {
@@ -51,5 +59,21 @@ public class Authentication {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Boolean getSuccessful() {
+        return successful;
+    }
+
+    public void setSuccessful(Boolean successful) {
+        this.successful = successful;
+    }
+
+    public String getAttemptedToken() {
+        return attemptedToken;
+    }
+
+    public void setAttemptedToken(String attemptedToken) {
+        this.attemptedToken = attemptedToken;
     }
 }

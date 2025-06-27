@@ -56,6 +56,7 @@ public class KeyCodeAuthenticationProvider implements AuthenticationProvider {
         } catch (UsernameNotFoundException | BadCredentialsException e) {
             log.error("Error during authentication for key code: {}", keyCode, e);
             bruteForceDefender.loginFailed(clientIP);
+            authenticationTracker.trackUnsuccessfulAuthentication(keyCode);
             throw e;
         }
 

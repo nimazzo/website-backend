@@ -69,6 +69,39 @@ PG_USER=user
 PG_PW=secret
 ```
 
+### Configure pgAdmin Servers
+
+To simplify connecting to the PostgreSQL database using pgAdmin, a template configuration file is provided at
+`.pgadmin/servers.json.example`
+
+#### Create `servers.json` for production and `servers-dev.json` for development:
+
+```sh
+cp .pgadmin/servers.json.example .pgadmin/servers.json
+cp .pgadmin/servers.json.example .pgadmin/servers-dev.json
+```
+
+Then, edit the newly created files to match your environment, for example:
+
+```json
+{
+  "Servers": {
+    "1": {
+      "Name": "example-db",
+      "Group": "Servers",
+      "Port": "5432",
+      "Username": "example-username",
+      "Host": "example-host",
+      "MaintenanceDB": "postgres",
+      "ConnectionParameters": {
+        "sslmode": "prefer",
+        "connect_timeout": 10
+      }
+    }
+  }
+}
+```
+
 ### Docker Compose Setup
 
 Ensure you have Docker and Docker Compose installed and your Docker daemon is running. The project includes a
@@ -126,10 +159,21 @@ through the provided [REST API](#admin-rest-api).
 }
 ```
 
+#### Generating Login Token for Specific Owner
+
++ `POST /admin/tokens/add?owner=<owner>`
++ Automatically creates a new token for the given owner.
+
 #### Retrieving Login Tokens
 
 + `GET /admin/tokens`
 + Returns a list of all registered login tokens in the database.
+
+#### Get List of Successful and/or Unsuccessful Authentication Attempts
+
++ `GET /admin/authentications`
++ Optionally, pass `successful=<true|false>` as a query parameter to only retrieve successful or unsuccessful
+  authentication attempts.
 
 #### Unblocking Users
 

@@ -5,16 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class ContentService {
@@ -69,6 +72,41 @@ public class ContentService {
         log.info("Resource length: {}", resource.contentLength());
 
         return resource;
+    }
+
+    public Resource getContentZip() {
+        try (var baos = new ByteArrayOutputStream();
+             var zos = new ZipOutputStream(baos)) {
+            log.info("Creating in-memory content.zip from: {}", contentPath.toAbsolutePath());
+
+            Files.walkFileTree(contentPath, new SimpleFileVisitor<>() {
+                @Override
+                @Nonnull
+                public FileVisitResult visitFile(@Nonnull Path file, @Nonnull BasicFileAttributes attrs) throws IOException {
+                    var relativeFileLocation = contentPath.relativize(file);
+                    log.info("Adding file to ZIP: {}", relativeFileLocation);
+                    var zipEntry = new ZipEntry(relativeFileLocation.toString().replace("\\", "/"));
+                    zos.putNextEntry(zipEntry);
+                    Files.copy(file, zos);
+                    zos.closeEntry();
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+
+            zos.finish();
+
+            var zipBytes = baos.toByteArray();
+            return new ByteArrayResource(zipBytes) {
+                @Override
+                public String getFilename() {
+                    return "content.zip";
+                }
+            };
+
+        } catch (IOException e) {
+            log.error("Failed to create content.zip", e);
+            throw new RuntimeException(e);
+        }
     }
 
     /*

@@ -9,6 +9,9 @@ import com.example.websitebackend.security.tracking.AuthenticationTracker;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -82,6 +85,21 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/admin/content")
+    public ResponseEntity<Resource> getContent() {
+        var content = contentService.getContentZip();
+
+        if (content == null) {
+            log.error("Content zip file was not found.");
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + content.getFilename() + "\"")
+                .contentType(MediaType.valueOf("application/zip"))
+                .body(content);
+    }
 
     @PostMapping("/admin/content")
     public ResponseEntity<Void> setContent(@RequestParam("content") MultipartFile contentFile) {

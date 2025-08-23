@@ -192,6 +192,11 @@ through the provided [REST API](#admin-rest-api).
 + Deletes all entries of failed login attempts from the database and thus unblocks all users that were blocked due to
   too many failed login attempts.
 
+#### Downloading Content
+
++ `GET /admin/content`
++ Downloads the current content of the website as a ZIP file.
+
 #### Uploading Content
 
 + `POST /admin/content`

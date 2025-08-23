@@ -36,3 +36,6 @@ data/
 content/
 
 .env
+
+.pgadmin/*
+!.pgadmin/servers.json.example

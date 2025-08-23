@@ -1,12 +1,12 @@
 {
   "Servers": {
     "1": {
-      "Name": <DATABASE_NAME>,
-      "Group": <DATABASE_GROUP>,
+      "Name": "<DATABASE_NAME>",
+      "Group": "Servers",
       "Port": <DATABASE_PORT>,
-      "Username": <DATABASE_USERNAME>,
-      "Host": <DATABASE_HOST_NAME>,
-      "MaintenanceDB": <MAINTENANCE_DB>,
+      "Username": "<DATABASE_USERNAME>",
+      "Host": "<DATABASE_HOST_NAME>",
+      "MaintenanceDB": "postgres",
       "ConnectionParameters": {
         "sslmode": "prefer",
         "connect_timeout": 10

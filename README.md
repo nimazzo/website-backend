@@ -69,6 +69,17 @@ PG_USER=user
 PG_PW=secret
 ```
 
+#### Development Configuration
+
+During development mode (running the Spring Boot Application outside of Docker) you need to additionally set the
+following three environment variables, so that the Spring Boot Application can connect to the database.
+
+```
+SPRING_DATASOURCE_URL=<url>
+SPRING_DATASOURCE_USERNAME=<user>
+SPRING_DATASOURCE_PASSWORD=<password>
+```
+
 ### Configure pgAdmin Servers
 
 To simplify connecting to the PostgreSQL database using pgAdmin, a template configuration file is provided at

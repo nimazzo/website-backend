@@ -1,6 +1,7 @@
 services:
   postgres:
     image: 'postgres:latest'
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${PG_DB}
       POSTGRES_PASSWORD: ${PG_PW}
@@ -13,6 +14,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
@@ -26,6 +28,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${PG_DB}
       SPRING_DATASOURCE_USERNAME: ${PG_USER}
